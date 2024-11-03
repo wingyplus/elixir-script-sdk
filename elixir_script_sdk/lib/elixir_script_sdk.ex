@@ -13,14 +13,18 @@ defmodule ElixirScriptSdk do
     []
   end
 
-  defn module_runtime(mod_source: Dagger.ModuleSource.t(), introspection_json: Dagger.File.t()) ::
-         Dagger.Container.t() do
+  defn module_runtime(
+         mod_source: Dagger.ModuleSource.t(),
+         introspection_json: Dagger.File.t()
+       ) :: Dagger.Container.t() do
     dag()
     |> Client.container()
   end
 
-  defn codegen(mod_source: Dagger.ModuleSource.t(), introspection_json: Dagger.File.t()) ::
-         Dagger.GeneratedCode.t() do
+  defn codegen(
+         mod_source: Dagger.ModuleSource.t(),
+         introspection_json: Dagger.File.t()
+       ) :: Dagger.GeneratedCode.t() do
     with {:ok, mod_name} <- Dagger.ModuleSource.module_name(mod_source),
          {:ok, sub_path} <- Dagger.ModuleSource.source_subpath(mod_source) do
       container =
@@ -29,6 +33,7 @@ defmodule ElixirScriptSdk do
         |> ElixirSdk.base(mod_source, sub_path)
         |> ElixirSdk.with_sdk(introspection_json)
         |> with_new_script(mod_name)
+        |> Container.terminal()
 
       dag()
       |> Client.generated_code(Container.directory(container, "/src"))
