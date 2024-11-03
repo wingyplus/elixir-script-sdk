@@ -32,8 +32,7 @@ defmodule ElixirScriptSdk do
         |> Client.elixir_sdk()
         |> ElixirSdk.base(mod_source, sub_path)
         |> ElixirSdk.with_sdk(introspection_json)
-        |> with_new_script(mod_name)
-        |> Container.terminal()
+        |> with_new_script(mod_name, sub_path)
 
       dag()
       |> Client.generated_code(Container.directory(container, "/src"))
@@ -44,14 +43,14 @@ defmodule ElixirScriptSdk do
 
   ## Helper functions
 
-  defp with_new_script(elixir_sdk, mod_name) do
+  defp with_new_script(elixir_sdk, mod_name, sub_path) do
     script_name = Macro.underscore(mod_name)
     mod_name = Macro.camelize(mod_name)
 
     elixir_sdk
     |> ElixirSdk.container()
     |> Container.with_new_file(
-      "/src/#{script_name}.exs",
+      "/src/#{sub_path}/#{script_name}.exs",
       String.replace(@script, "ChangemeModule", mod_name)
     )
   end
