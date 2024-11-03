@@ -20,7 +20,7 @@ defmodule ElixirScriptSdk do
   end
 
   defn codegen(mod_source: Dagger.ModuleSource.t(), introspection_json: Dagger.File.t()) ::
-         Dagger.Container.t() do
+         Dagger.GeneratedCode.t() do
     with {:ok, mod_name} <- Dagger.ModuleSource.module_name(mod_source),
          {:ok, sub_path} <- Dagger.ModuleSource.source_subpath(mod_source) do
       container =
