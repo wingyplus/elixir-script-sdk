@@ -4,7 +4,7 @@
   "dependencies": [
     {
       "name": "elixir-sdk",
-      "source": "github.com/dagger/dagger/sdk/elixir@a129595a54fd5362f266d969a2635d80b8b3e51c"
+      "source": "github.com/wingyplus/dagger/sdk/elixir@123279b2c266a5c35cc072c1564f1d6744a9b87d"
     }
   ],
   "source": ".",
