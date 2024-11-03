@@ -3,7 +3,12 @@ defmodule ElixirScriptSdk do
 
   use Dagger.Mod.Object, name: "ElixirScriptSdk"
 
-  alias Dagger.{Client, ElixirSdk, Container, GeneratedCode}
+  alias Dagger.{
+    Client,
+    Container,
+    ElixirSdk,
+    GeneratedCode
+  }
 
   @script File.read!(Path.join([:code.priv_dir(:elixir_script_sdk), "templates", "main.exs"]))
 
@@ -17,8 +22,15 @@ defmodule ElixirScriptSdk do
          mod_source: Dagger.ModuleSource.t(),
          introspection_json: Dagger.File.t()
        ) :: Dagger.Container.t() do
-    dag()
-    |> Client.container()
+    with {:ok, mod_name} <- Dagger.ModuleSource.module_name(mod_source),
+         {:ok, sub_path} <- Dagger.ModuleSource.source_subpath(mod_source) do
+      script_name = Macro.underscore(mod_name)
+
+      dag()
+      |> with_sdk(mod_source, sub_path, introspection_json)
+      |> ElixirSdk.container()
+      |> Container.with_entrypoint(["elixir", "/src/#{sub_path}/#{script_name}.exs"])
+    end
   end
 
   defn codegen(
@@ -29,9 +41,7 @@ defmodule ElixirScriptSdk do
          {:ok, sub_path} <- Dagger.ModuleSource.source_subpath(mod_source) do
       container =
         dag()
-        |> Client.elixir_sdk()
-        |> ElixirSdk.base(mod_source, sub_path)
-        |> ElixirSdk.with_sdk(introspection_json)
+        |> with_sdk(mod_source, sub_path, introspection_json)
         |> with_new_script(mod_name, sub_path)
 
       dag()
@@ -42,6 +52,13 @@ defmodule ElixirScriptSdk do
   end
 
   ## Helper functions
+
+  defp with_sdk(dag, mod_source, sub_path, introspection_json) do
+    dag
+    |> Client.elixir_sdk()
+    |> ElixirSdk.base(mod_source, sub_path)
+    |> ElixirSdk.with_sdk(introspection_json)
+  end
 
   defp with_new_script(elixir_sdk, mod_name, sub_path) do
     script_name = Macro.underscore(mod_name)
