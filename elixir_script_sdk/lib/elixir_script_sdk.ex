@@ -29,7 +29,11 @@ defmodule ElixirScriptSdk do
       dag()
       |> with_sdk(mod_source, sub_path, introspection_json)
       |> ElixirSdk.container()
-      |> Container.with_entrypoint(["elixir", "/src/#{sub_path}/#{script_name}.exs"])
+      |> Container.with_entrypoint([
+        "sh",
+        "-c",
+        "cd /src/#{sub_path} && elixir #{script_name}.exs"
+      ])
     end
   end
 
