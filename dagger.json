@@ -1,0 +1,12 @@
+{
+  "name": "elixir-script-sdk",
+  "sdk": "elixir",
+  "dependencies": [
+    {
+      "name": "elixir-sdk",
+      "source": "github.com/dagger/dagger/sdk/elixir@a129595a54fd5362f266d969a2635d80b8b3e51c"
+    }
+  ],
+  "source": ".",
+  "engineVersion": "v0.13.5"
+}
