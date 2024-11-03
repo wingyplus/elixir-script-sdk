@@ -9,6 +9,10 @@ defmodule ElixirScriptSdk do
 
   ## SDK implementation.
 
+  defn required_paths() :: [String.t()] do
+    []
+  end
+
   defn module_runtime(mod_source: Dagger.ModuleSource.t(), introspection_json: Dagger.File.t()) ::
          Dagger.Container.t() do
     dag()
